@@ -2,10 +2,7 @@ import streamlit as st
 import numpy as np
 from PIL import Image
 import tensorflow as tf
-
-# Uncomment the following lines to load your pre-trained model
 from tensorflow.keras.models import load_model
-model = load_model('notebooks/cnn_model.h5')  # Replace with your model file
 
 # Custom CSS for styling
 st.markdown(
@@ -60,13 +57,23 @@ st.markdown(
 st.title("Alzheimer's Disease Detection")
 st.markdown("### Upload an MRI Image to Detect Alzheimer's Disease")
 
+# Model Selection Dropdown
+model_name = st.selectbox("Choose the model to use", ["2-Layer CNN", "3-Layer CNN"])
+
+# Load the appropriate model based on selection
+if model_name == "2-Layer CNN":
+    model = load_model('model/best_model1.keras')  # Replace with your 2-layer CNN model path
+elif model_name == "3-Layer CNN":
+    model = load_model('model/model2.keras')  # Replace with your 3-layer CNN model path
+
 # Upload an image
 uploaded_file = st.file_uploader("Choose an MRI image file", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
     # Display the uploaded image
     image = Image.open(uploaded_file)
-    st.image(image, caption='Uploaded MRI Image', use_column_width=True)  # Corrected line
+    st.image(image, caption='Uploaded MRI Image', use_container_width=True)  # Corrected line
+
     # Preprocess the image
     def preprocess_image(image):
         image = image.resize((128, 128))  # Resizing to model's input size
@@ -83,8 +90,7 @@ if uploaded_file is not None:
     labels = {0: "Mild Demented", 1: "Moderate Demented", 2: "Non Demented", 3: "Very Mild Demented"}
     result = labels[predicted_class]
 
-    # For demonstration, display placeholder text
     # Display the result
     st.markdown(f"<div class='output-text'>Prediction: <b>{result}</b></div>", unsafe_allow_html=True)
 else:
-    st.info("Please upload an MRI image to proceed.")
+    st.info("Please upload the model and an MRI image to proceed.")
